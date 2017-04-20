@@ -2,7 +2,37 @@
 	// body...
 	'use strict';
 
-	var shoppinglist1=[
+	angular.module("ShoppingListCheckOff",[])
+			.controller("ToBuyController",ToBuyController)
+			.controller("AlreadyBoughtController",AlreadyBoughtController)
+			.service('ShoppingListService',ShoppingListService);
+
+			ToBuyController.$inject = ['ShoppingListService'];
+			function ToBuyController(ShoppingListService){
+
+				
+				var shoppinglist=this;
+				shoppinglist.items = ShoppingListService.getBuyItems();
+					shoppinglist.buyItem = function (itemIndex) {
+    ShoppingListService.buyItem(itemIndex);
+  }
+
+				}
+
+
+				AlreadyBoughtController.$inject=['ShoppingListService'];	
+				function AlreadyBoughtController(ShoppingListService){
+					var showList = this;
+					showList.items=ShoppingListService.getBoughtItems();
+				}
+			
+
+			function ShoppingListService(){
+				var service = this;
+
+				  // List of shopping items
+
+				  var buyitems=[
 					{
 						name:"cookies",
 						quantity:"5"
@@ -24,56 +54,21 @@
 						quantity:"5"
 					}
 					]
+				  var boughtitems = [];
 
+				  service.buyItem = function (itemIdex) {
+					    var item = buyitems[itemIdex];
+					    boughtitems.push(item);
+					    buyitems.splice(itemIdex, 1);
+					  };
 
-	angular.module("ShoppingListCheckOff",[])
-			.controller("ToBuyController",ToBuyController)
-			.controller("AlreadyBoughtController",AlreadyBoughtController)
-			.service('ShoppingListService',ShoppingListService);
+					   service.getBuyItems = function () {
+					    return buyitems;
+					  };
 
-			ToBuyController.$inject = ['$scope','ShoppingListService'];
-			function ToBuyController($scope,ShoppingListService){
-
-				$scope.shoppinglist1=shoppinglist1;
-				var shoppinglist=this;
-				shoppinglist.name="";
-				shoppinglist.quantity="";
-				
-
-					shoppinglist.addItem=function(){
-						ShoppingListService.addItem(shoppinglist.name, shoppinglist.quantity);
-					}
-
-					
-
-				}
-
-
-				AlreadyBoughtController.$inject=['ShoppingListService'];	
-				function AlreadyBoughtController(ShoppingListService){
-					var showList = this;
-					showList.items=ShoppingListService.getItems();
-				}
-			function ShoppingListService(){
-				var service = this;
-
-				  // List of shopping items
-				  var items = [];
-
-				  service.addItem = function (name, quantity) {
-				    var item = {
-				      name: name,
-				      quantity: quantity
-				    };
-				    items.push(item);
-				  };
-				  service.removeItem = function (itemIdex) {
-    items.splice(itemIdex, 1);
-  };
-				  service.getItems = function () {
-				    return items;
-				  };
-
+						  service.getBoughtItems = function () {
+						    return boughtitems;
+						  };
 			}
 
 })();
